@@ -9,11 +9,13 @@ class HomeScreenControllers extends GetxController {
   late DatabaseService databaseService;
   
   RxDouble pckValue = 45.66.obs;
-  RxDouble msValue = 54.66.obs;
+  RxDouble msValueOrHsd = 54.66.obs;
   Rx<RxStatus> homeScreenLoadingStatus = RxStatus.loading().obs;
   RxList<TaskData> taskDataList = <TaskData>[].obs;
   var lastUpdatedAt = ''.obs;
   RxList<FlSpot> chartData = <FlSpot>[].obs;
+  RxBool isToggled = false.obs;
+  RxString toggledText = 'MS-PCK Mode'.obs;
 
   @override
   void onInit() async {
@@ -21,27 +23,30 @@ class HomeScreenControllers extends GetxController {
     homeScreenLoadingStatus.value = RxStatus.loading();
     super.onInit();
     databaseService = await DatabaseService.instance;
-    await fetchTableData();
-    chartData.value = await getChartData();
+    await fetchTableData(false);
+    chartData.value = await getChartData(false);
     homeScreenLoadingStatus.value = RxStatus.success();
   }
 
-  Future<void> fetchTableData() async {
+  void toggleButtonClicked(bool value){
+    print('the value is ${value}');
+    isToggled.value = value;
+    if(!value){
+      toggledText.value = 'MS-PCK Mode';
+      updateHomeData(isTable2: false);
+    }
+    else{
+      toggledText.value = 'HSD-PCK Mode';
+      updateHomeData(isTable2: true);
+    }
+  }
+
+  Future<void> fetchTableData(bool isTable2) async {
     final db = await databaseService.database;
-    final List<Map<String, dynamic>> maps = await db.query(databaseService.tasksTableName);
+    final List<Map<String, dynamic>> maps = await db.query(isTable2 ? databaseService.tasks2TableName : databaseService.tasksTableName);
     taskDataList.value = maps.map((map) => TaskData.fromMap(map)).toList();
     lastUpdatedAt.value = formatLastUpdatedAt(DateTime.now());
   }
-
-  Future<void> updateHomeScreen() async {
-    homeScreenLoadingStatus = RxStatus.loading().obs;
-    fetchTableData();
-    chartData.value = await getChartData();
-    homeScreenLoadingStatus = RxStatus.success().obs;
-    
-  }
-
-
 
 DateTime parseTime(String timeString) {
   timeString = timeString.trim(); // Remove extra spaces
@@ -62,9 +67,9 @@ DateTime parseTime(String timeString) {
 }
 
 
-Future<List<FlSpot>> getChartData() async {
+Future<List<FlSpot>> getChartData(bool isTable2) async {
   final db = await databaseService.database;
-  final List<Map<String, dynamic>> maps = await db.query(databaseService.tasksTableName);
+  final List<Map<String, dynamic>> maps = await db.query(isTable2 ? databaseService.tasks2TableName : databaseService.tasksTableName);
 
   return maps.map((map) {
     String timeString = map['time'];
@@ -83,10 +88,10 @@ Future<List<FlSpot>> getChartData() async {
 }
 
 
-  Future updateHomeData() async{
+  Future updateHomeData({bool isTable2 = false}) async{
     homeScreenLoadingStatus.value = RxStatus.loading();
-    await fetchTableData();
-    chartData.value = await getChartData();
+    await fetchTableData(isTable2);
+    chartData.value = await getChartData(isTable2);
     homeScreenLoadingStatus.value = RxStatus.success();
   }
 
@@ -109,4 +114,12 @@ Future<List<FlSpot>> getChartData() async {
   String month = DateFormat('MMM').format(dateTime);
   return '$time $dayWithSuffix $month';
 }
+
+List<PieChartSectionData> piechartSection(){
+  return  
+  List.generate(2 , (index) => PieChartSectionData(
+   
+  ));
+}
+
 }

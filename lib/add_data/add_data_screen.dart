@@ -41,7 +41,7 @@ class AddDataScreen extends GetView<AddDataScreenControllers> {
               SizedBox(height: scale.getScaledHeight(16)),
               buildInputField(
                 scale,
-                "Pure PCK Density",
+                "Pure PCK density at 15 Deg Kg/cm3",
                 TextInputType.number,
                 controller.purePCKController,
                 (value) => controller.setAvgPckDensity(value),
@@ -49,7 +49,7 @@ class AddDataScreen extends GetView<AddDataScreenControllers> {
               SizedBox(height: scale.getScaledHeight(16)),
               buildInputField(
                 scale,
-                "Pure MS Density",
+                !controller.homeScreenControllers.isToggled.value ? "Pure MS density at 15 Deg Kg/cm3" : "Pure HSD density at 15 Deg Kg/cm3" ,
                 TextInputType.number,
                 controller.pureMSController,
                 (value) => controller.setAvgPckDensity(value),
@@ -59,7 +59,7 @@ class AddDataScreen extends GetView<AddDataScreenControllers> {
               SizedBox(height: scale.getScaledHeight(16)),
               buildInputField(
                 scale,
-                "Avg PCK- MS Density kg/cm3",
+                "Avg PCK-MS Density at 15 Deg Kg/cm3",
                 TextInputType.number,
                 controller.avgPckDensityController,
                 (value) => controller.setAvgPckDensity(value),
@@ -67,7 +67,7 @@ class AddDataScreen extends GetView<AddDataScreenControllers> {
               SizedBox(height: scale.getScaledHeight(16)),
               buildInputField(
                 scale,
-                "Interface Density kg/cm3",
+                "Interface Density at 15 Deg kg/cm3",
                 TextInputType.number,
                 controller.interfaceDensityController,
                 (value) => controller.setInterfaceDensity(value),

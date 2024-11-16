@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Indian Oil Projects',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
       ),
       home: HomeScreen(),

@@ -239,7 +239,7 @@ void endCurrentSessionClicked() async{
     HistoryModels historyModels = HistoryModels(
     currentDateAndTime: DateTime.now(),
     finalPckValue: homeScreenControllers.pckValue.value,
-    finalMSValue: homeScreenControllers.msValue.value,
+    finalMSValue: homeScreenControllers.msValueOrHsd.value,
     listOfFlSpot: homeScreenControllers.chartData,
   );
    await Get.find<PrefUtils>().addJsonToList(historyModels.toJson(), "history_data");

@@ -42,6 +42,17 @@ class HomeScreen extends GetView<HomeScreenControllers> {
             _scaffoldKey.currentState?.openDrawer();
           },
         ),
+        actions: [
+          Obx(() {
+            return Switch(
+              value: controller.isToggled.value,
+              activeColor: const Color.fromARGB(255, 6, 99, 175),
+              onChanged: (value) {
+                  controller.toggleButtonClicked(value);
+              },
+            );
+          }),
+        ],
       ),
       drawer: buildSideDrawer(scale),
       body: Obx(() {
@@ -70,7 +81,7 @@ class HomeScreen extends GetView<HomeScreenControllers> {
     return Padding(
       padding: scale.getPadding(horizontal: 15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Obx(() {
             return Text(
@@ -82,6 +93,13 @@ class HomeScreen extends GetView<HomeScreenControllers> {
               ),
             );
           }),
+          Text(
+            controller.toggledText.value,
+            style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w500,
+                fontSize: scale.getScaledFont(15),             
+              ),
+          )
         ],
       ),
     );
@@ -93,7 +111,7 @@ class HomeScreen extends GetView<HomeScreenControllers> {
       child: Column(
         children: [
           Text(
-            'Final PCK and MS Value',
+            'Final QTY KL value of',
             style: GoogleFonts.plusJakartaSans(
               fontSize: scale.getScaledFont(20),
               fontWeight: FontWeight.w600,
@@ -116,9 +134,9 @@ class HomeScreen extends GetView<HomeScreenControllers> {
               Expanded(
                 child: buildValueCard(
                   scale,
-                  title: 'MS',
-                  value: controller.msValue.value.toString(),
-                  color: Color.fromARGB(255, 255, 87, 34),
+                  title: !controller.isToggled.value ? 'MS' : 'HSD',
+                  value: controller.msValueOrHsd.value.toString(),
+                  color: !controller.isToggled.value ? Color.fromARGB(255, 255, 87, 34) : Colors.blue,
                 ),
               ),
             ],
@@ -213,7 +231,7 @@ class HomeScreen extends GetView<HomeScreenControllers> {
             return LineChart(
               LineChartData(
                 lineBarsData: [
-                  LineChartBarData(
+                  LineChartBarData(   
                     spots: controller.chartData,
                     isCurved: false,
                     dotData: FlDotData(show: false),
@@ -377,6 +395,15 @@ class HomeScreen extends GetView<HomeScreenControllers> {
               ),
             ],
           ),
+          SizedBox(height: scale.getScaledHeight(10),),
+          Container(
+            height: scale.getScaledHeight(200),
+            child: PieChart(
+              PieChartData(
+                sections: controller.piechartSection(),
+              )
+            ),
+          )
       ],
     );
   }
