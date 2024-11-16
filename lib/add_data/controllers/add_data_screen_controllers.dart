@@ -81,7 +81,19 @@ class AddDataScreenControllers extends GetxController {
           "flowRate: $flowRateValue, "
           "flowRateInKlPerMin: $flowRateInKlPerMinValue");
 
-      await homeScreenControllers.databaseService.addTask(
+      if(homeScreenControllers.isToggled.value == false){ 
+        await homeScreenControllers.databaseService.addTask(
+        avgPckMsDensity: avgPckDensityValue,
+        interfaceDensity: interfaceDensityValue,
+        time: time.value,
+        percentOfPck: 0.0,
+        percentOfMs: 0.0,
+        qtyKlOfPck: flowRateValue,
+        qtyKlOfMs: flowRateInKlPerMinValue,
+        totalKlInterface: flowRateValue + flowRateInKlPerMinValue,
+      );}
+      else{
+        await homeScreenControllers.databaseService.addTaskToTable2(
         avgPckMsDensity: avgPckDensityValue,
         interfaceDensity: interfaceDensityValue,
         time: time.value,
@@ -92,12 +104,14 @@ class AddDataScreenControllers extends GetxController {
         totalKlInterface: flowRateValue + flowRateInKlPerMinValue,
       );
 
+      }
+
       homeScreenControllers.lastUpdatedAt.value =
           DateFormat('HH:mm:ss').format(DateTime.now());
       print("Data added successfully to database.");
 
       showSnackbar();
-      homeScreenControllers.updateHomeData();
+      homeScreenControllers.updateHomeData(isTable2: homeScreenControllers.isToggled.value);
 
       addDataScreenLoadingStatus = RxStatus.success();
     } catch (e) {

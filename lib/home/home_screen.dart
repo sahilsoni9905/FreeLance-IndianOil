@@ -379,32 +379,92 @@ class HomeScreen extends GetView<HomeScreenControllers> {
     );
   }
 
-  Widget buildPieChart(ScalingUtility scale) {
-    return Column(
+Widget buildPieChart(ScalingUtility scale) {
+  return Padding(
+    padding: scale.getPadding(horizontal: 5),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: scale.getScaledHeight(20),),
+        SizedBox(height: scale.getScaledHeight(20)),
         Row(
+          children: [
+            Text(
+              'Pie Chart',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: scale.getScaledFont(20),
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: scale.getScaledHeight(10)),
+        Padding(
+          padding: scale.getPadding(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, 
             children: [
-              Text(
-                'Pie Chart',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: scale.getScaledFont(20),
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+              Container(
+                height: scale.getScaledHeight(200),
+                width: scale.getScaledWidth(200), 
+                child: PieChart(
+                  PieChartData( 
+                    sectionsSpace: 10,                 
+                    centerSpaceRadius: 0,
+                    sections: controller.piechartSection(scale),
+                  ),
                 ),
               ),
+              SizedBox(width: scale.getScaledWidth(20),),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    
+                    children: [
+                      Container(
+                        height: 15,
+                        width: 15,
+                        color: Colors.red,
+                      ),
+                       SizedBox(width: scale.getScaledWidth(5),),
+                  Text(
+                    'PCM',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: scale.getScaledFont(15),
+                    ),
+
+                  )
+                    ],
+                  ),
+                  SizedBox(height: scale.getScaledHeight(20),),
+                  Row(
+                    children: [
+                      Container(
+                        height: 15,
+                        width: 15,
+                        color: Colors.green,
+                      ),
+                       SizedBox(width: scale.getScaledWidth(5),),
+                  Text(
+                    'MS',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: scale.getScaledFont(15),
+                    ),
+
+                  )
+                    ],
+                  ),
+                 
+                ],
+              )
             ],
           ),
-          SizedBox(height: scale.getScaledHeight(10),),
-          Container(
-            height: scale.getScaledHeight(200),
-            child: PieChart(
-              PieChartData(
-                sections: controller.piechartSection(),
-              )
-            ),
-          )
+        ),
+        SizedBox(height: scale.getScaledHeight(20)),
       ],
-    );
-  }
+    ),
+  );
+}
+
 }

@@ -24,7 +24,7 @@ class TableScreenControllers extends GetxController {
     tableScreenLoadingStatus.value = RxStatus.loading();
 
     final db = await homeScreenControllers.databaseService.database;
-    final List<Map<String, dynamic>> maps = await db.query(homeScreenControllers.databaseService.tasksTableName);
+    final List<Map<String, dynamic>> maps = await db.query(homeScreenControllers.isToggled.value ? homeScreenControllers.databaseService.tasks2TableName : homeScreenControllers.databaseService.tasksTableName);
 
     taskDataList.value = maps.map((map) => TaskData.fromMap(map)).toList();
 
@@ -232,23 +232,46 @@ Future<void> deleteRowAtIndex(int index) async {
 }
 
 
-
-void endCurrentSessionClicked() async{
+void endCurrentSessionClicked() async {
   try {
-    tableScreenLoadingStatus = RxStatus.loading().obs;
-    HistoryModels historyModels = HistoryModels(
-    currentDateAndTime: DateTime.now(),
-    finalPckValue: homeScreenControllers.pckValue.value,
-    finalMSValue: homeScreenControllers.msValueOrHsd.value,
-    listOfFlSpot: homeScreenControllers.chartData,
-  );
-   await Get.find<PrefUtils>().addJsonToList(historyModels.toJson(), "history_data");
-   print(historyModels.toJson());
-   tableScreenLoadingStatus = RxStatus.success().obs;
-  } catch (e) {
-    print('something went wrong ${e.toString()}');
-  }
+    tableScreenLoadingStatus.value = RxStatus.loading();
 
+    // Create first HistoryModels
+    HistoryModels historyModels = HistoryModels(
+      currentDateAndTime: DateTime.now(),
+      isTable1: !homeScreenControllers.isToggled.value,
+      finalPckValue: homeScreenControllers.pckValue.value,
+      finalMSValue: homeScreenControllers.msValueOrHsd.value,
+      listOfFlSpot: homeScreenControllers.chartData,
+    );
+
+    // Print debug info
+    print('Adding first history model: ${historyModels.toJson()}');
+    await Get.find<PrefUtils>().addJsonToList(historyModels.toJson(), "history_data");
+
+    // Toggle the button
+    homeScreenControllers.isToggled.value = !homeScreenControllers.isToggled.value;
+    await homeScreenControllers.toggleButtonClicked(homeScreenControllers.isToggled.value);
+
+    // Create second HistoryModels
+    HistoryModels historyModels2 = HistoryModels(
+      currentDateAndTime: DateTime.now(),
+      isTable1: !homeScreenControllers.isToggled.value,
+      finalPckValue: homeScreenControllers.pckValue.value,
+      finalMSValue: homeScreenControllers.msValueOrHsd.value,
+      listOfFlSpot: homeScreenControllers.chartData,
+    );
+
+    // Print debug info
+    print('Adding second history model: ${historyModels2.toJson()}');
+    await Get.find<PrefUtils>().addJsonToList(historyModels2.toJson(), "history_data");
+
+    tableScreenLoadingStatus.value = RxStatus.success();
+  } catch (e) {
+    print('Something went wrong: ${e.toString()}');
+    tableScreenLoadingStatus.value = RxStatus.error();
+  }
 }
+
 
 }

@@ -1,6 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:oil_solution/services/database_service.dart';
+import 'package:oil_solution/services/scale_utils_service.dart';
 import 'package:oil_solution/services/shared_pref_service.dart';
 import 'package:oil_solution/table/models/table_data_models.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -28,16 +31,16 @@ class HomeScreenControllers extends GetxController {
     homeScreenLoadingStatus.value = RxStatus.success();
   }
 
-  void toggleButtonClicked(bool value){
+  Future<void> toggleButtonClicked(bool value)async {
     print('the value is ${value}');
     isToggled.value = value;
     if(!value){
       toggledText.value = 'MS-PCK Mode';
-      updateHomeData(isTable2: false);
+      await updateHomeData(isTable2: false);
     }
     else{
       toggledText.value = 'HSD-PCK Mode';
-      updateHomeData(isTable2: true);
+      await updateHomeData(isTable2: true);
     }
   }
 
@@ -115,11 +118,32 @@ Future<List<FlSpot>> getChartData(bool isTable2) async {
   return '$time $dayWithSuffix $month';
 }
 
-List<PieChartSectionData> piechartSection(){
+List<PieChartSectionData> piechartSection(ScalingUtility scale){
+  List<Color> sectionColors = [
+    Colors.red,
+    Colors.green,
+  ];
   return  
-  List.generate(2 , (index) => PieChartSectionData(
-   
-  ));
+  List.generate(2 , (index){
+    final radius = scale.getScaledHeight(100);
+    double value = (index + 1)*10;
+    return PieChartSectionData(
+
+      borderSide: BorderSide(
+        color:  Colors.black ,
+        width: 2,
+      ),
+      value: value ,
+      title: '${value}%',
+      color: sectionColors[index],
+      radius: radius,
+      titleStyle: GoogleFonts.plusJakartaSans(
+        color: Colors.white,
+        fontSize: scale.getScaledFont(20),
+      ),
+
+      );
+  });
 }
 
 }

@@ -27,17 +27,19 @@ class PrefUtils {
   await _sharedPreferences!.setString('lastSetTime', currentTime);
 }
 
- Future<void> addJsonToList(Map<String, dynamic> newJson, String key) async {
-    if (_sharedPreferences == null) {
-      _sharedPreferences = await SharedPreferences.getInstance();
-    }
-
-    String? jsonString = _sharedPreferences!.getString(key);
-    List<dynamic> currentList = jsonString != null ? jsonDecode(jsonString) : [];
-    currentList.add(newJson);
-
-    await _sharedPreferences!.setString(key, jsonEncode(currentList));
+Future<void> addJsonToList(Map<String, dynamic> newJson, String key) async {
+  if (_sharedPreferences == null) {
+    _sharedPreferences = await SharedPreferences.getInstance();
   }
+  String? jsonString = _sharedPreferences!.getString(key);
+  List<dynamic> currentList = jsonString != null ? jsonDecode(jsonString) : [];
+  currentList.add(newJson);
+  if (currentList.length > 10) {
+    currentList.removeAt(0);
+  }
+  await _sharedPreferences!.setString(key, jsonEncode(currentList));
+}
+
 
  Future<List<HistoryModels>> getListFromSharedPref(String key) async {
   if (_sharedPreferences == null) {
@@ -52,6 +54,7 @@ class PrefUtils {
       .map((json) => HistoryModels.fromJson(json as Map<String, dynamic>))
       .toList();
 }
+
 
 
 
